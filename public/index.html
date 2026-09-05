@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VibeWatch — listen together</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============ LANDING ============ -->
+  <section id="landing" class="screen">
+    <div class="landing-wrap">
+      <div class="landing-copy">
+        <div class="mark">
+          <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+            <circle cx="17" cy="17" r="16" stroke="var(--amber)" stroke-width="1.4"/>
+            <circle cx="17" cy="17" r="5.5" fill="var(--amber)"/>
+            <circle cx="17" cy="17" r="1.6" fill="var(--bg)"/>
+          </svg>
+          <span>VibeWatch</span>
+        </div>
+        <h1>Press play<br>at the same time,<br>from anywhere.</h1>
+        <p class="sub">Drop a YouTube link, open a room, send the code to your friends. Everyone hears the same beat, same second — and you can hand the aux over whenever you want.</p>
+
+        <div class="landing-actions">
+          <div class="card">
+            <label for="name-input">Your name</label>
+            <input id="name-input" type="text" maxlength="20" placeholder="e.g. Aditi" />
+
+            <div class="split-actions">
+              <button id="create-btn" class="btn btn-primary">Start a room</button>
+              <div class="join-row">
+                <input id="code-input" type="text" maxlength="5" placeholder="ROOM CODE" autocapitalize="characters" />
+                <button id="join-btn" class="btn btn-ghost">Join</button>
+              </div>
+            </div>
+            <p id="landing-error" class="error-text"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="landing-art" aria-hidden="true">
+        <div class="disc">
+          <div class="disc-ring r1"></div>
+          <div class="disc-ring r2"></div>
+          <div class="disc-ring r3"></div>
+          <div class="disc-label">
+            <span>VIBE</span>
+            <span>WATCH</span>
+          </div>
+        </div>
+        <div class="tonearm"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ROOM ============ -->
+  <section id="room" class="screen hidden">
+    <header class="room-header">
+      <div class="room-id-block">
+        <span class="room-label">Room</span>
+        <button id="room-code-btn" class="room-code" title="Click to copy invite link">----</button>
+      </div>
+      <div class="room-header-right">
+        <span id="controller-pill" class="pill"></span>
+        <button id="leave-btn" class="btn btn-ghost btn-small">Leave</button>
+      </div>
+    </header>
+
+    <div class="room-body">
+      <main class="player-col">
+        <div class="player-shell">
+          <div id="yt-player"></div>
+          <div id="player-block" class="player-block hidden" title="Only the person in control can use the player"></div>
+          <div id="empty-player" class="empty-player">
+            <p>Nothing queued yet.</p>
+            <p class="muted">Paste a YouTube link below to get the room started.</p>
+          </div>
+        </div>
+
+        <div class="controls-bar">
+          <button id="play-btn" class="ctrl-btn ctrl-primary" title="Play/Pause">
+            <svg id="play-icon" width="18" height="18" viewBox="0 0 18 18"><path d="M4 2.5L15 9L4 15.5V2.5Z" fill="currentColor"/></svg>
+            <svg id="pause-icon" width="18" height="18" viewBox="0 0 18 18" class="hidden"><rect x="3" y="2" width="4" height="14" fill="currentColor"/><rect x="11" y="2" width="4" height="14" fill="currentColor"/></svg>
+          </button>
+          <button id="skip-btn" class="ctrl-btn" title="Skip">
+            <svg width="18" height="18" viewBox="0 0 18 18"><path d="M3 2.5L12 9L3 15.5V2.5Z" fill="currentColor"/><rect x="13" y="2.5" width="2.4" height="13" fill="currentColor"/></svg>
+          </button>
+          <div class="seek-wrap">
+            <span id="time-current" class="time-label">0:00</span>
+            <input id="seek-bar" type="range" min="0" max="100" value="0" step="0.1" />
+            <span id="time-total" class="time-label">0:00</span>
+          </div>
+        </div>
+
+        <form id="add-song-form" class="add-song-form">
+          <input id="song-url-input" type="text" placeholder="Paste a YouTube link…" autocomplete="off" />
+          <button type="submit" class="btn btn-primary btn-small">Add to queue</button>
+        </form>
+        <p id="add-song-error" class="error-text"></p>
+
+        <div class="queue-block">
+          <h2>Up next</h2>
+          <ol id="queue-list" class="queue-list"></ol>
+        </div>
+      </main>
+
+      <aside class="side-col">
+        <div class="panel">
+          <h2>Listening now <span id="people-count" class="muted"></span></h2>
+          <ul id="people-list" class="people-list"></ul>
+          <label class="ffa-toggle host-only hidden" id="ffa-row">
+            <input type="checkbox" id="ffa-checkbox" />
+            <span>Let anyone control playback</span>
+          </label>
+        </div>
+
+        <div class="panel chat-panel">
+          <h2>Room chat</h2>
+          <div id="chat-log" class="chat-log"></div>
+          <form id="chat-form" class="chat-form">
+            <input id="chat-input" type="text" maxlength="300" placeholder="Say something…" autocomplete="off" />
+            <button type="submit" class="btn btn-ghost btn-small">Send</button>
+          </form>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
